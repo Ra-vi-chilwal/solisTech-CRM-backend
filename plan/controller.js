@@ -28,7 +28,7 @@ module.exports = {
   //--------------------GET DEPARTMENT----------------------------------
   getPlan: async (req, res) => {
     try {
-        await Plan.find({}).then((err, result) => {
+        await Plan.find({}).then((result, err) => {
             if (result) {
                 return res.status(200).json({
                     code: "FETCHED",

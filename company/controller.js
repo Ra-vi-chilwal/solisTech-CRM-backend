@@ -2,8 +2,9 @@ const { Company } = require("./model");
 
 module.exports = {
   addCompany: async (req, res) => {
+   const userData = req.body;
     try {
-      const userData = req.body;
+    
       const existingUser = await Company.findOne({ email: userData.email });
       if (existingUser) {
         return res.status(200).json({
@@ -11,7 +12,7 @@ module.exports = {
           message: "Company  already exists.",
         });
       }
-      const result = await Company.create(userData);
+      const result = await Company.create({...userData,companyLogo:req.file.filename});
       res.status(200).json({
         code: "SUCCESS",
         data: result,
@@ -28,7 +29,7 @@ module.exports = {
   //--------------------GET DEPARTMENT----------------------------------
   getCompany: async (req, res) => {
     try {
-      await Company.find({}).then((err, result) => {
+      await Company.find({}).then((result, err) => {
         if (result) {
           return res.status(200).json({
             code: "FETCHED",

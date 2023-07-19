@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true },
   gender: { type: String, required: true },
   dob: { type: String, required: true },
+  company:{type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true}
 }, { collection: "users", timestamps: true });
 const Users = mongoose.model("Users", userSchema);
 module.exports = { Users, userSchema }

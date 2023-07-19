@@ -2,5 +2,5 @@ const { addCompany, getCompany } = require("./controller");
 // const { checkToken} = require('../s');
 const companyRouter = require("express").Router();
 companyRouter.post("/add", addCompany);
-companyRouter.post("/get", getCompany);
+companyRouter.get("/get", getCompany);
 module.exports = companyRouter;

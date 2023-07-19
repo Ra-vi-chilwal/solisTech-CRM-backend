@@ -4,7 +4,8 @@ module.exports = {
   addRole:  async (req, res) => { 
         try {
             const userData = req.body;
-            const existingUser = await Role.findOne({ companyId: userData.companyId });
+            console.log(userData)
+            const existingUser = await Role.findOne({ slug: userData.slug });
             if (existingUser) {
               return res.status(200).json({
                 code: 'DUPLICATION',
@@ -28,7 +29,7 @@ module.exports = {
   //--------------------GET DEPARTMENT----------------------------------
   getRole: async (req, res) => {
     try {
-        await Role.find({}).then((err, result) => {
+        await Role.find({}).then((result, err) => {
             if (result) {
                 return res.status(200).json({
                     code: "FETCHED",

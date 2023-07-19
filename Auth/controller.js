@@ -3,71 +3,9 @@ const { hash, compare } = require("bcryptjs");
 const { sign } = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 const { Role } = require("../role/model");
-// const AWS = require('aws-sdk');
+
 require("dotenv").config();
-// const awsConfig = {
-//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//   secretAccessKey: process.env.AWS_SECRET_KEY,
-//   region: process.env.AWS_REGION,
-//   apiVersion: "2010-12-01"
-// }
-
-// const SES = new AWS.SES(awsConfig);
-
 module.exports = {
-  // -----------Foget Password----------------
-  //   forgetPassword: async (req, res) => {
-  //     const { email } = req.body;
-  //     const userExist = await User.findOne({ email: email });
-  //     if (userExist) {
-  //       const OTP = Math.floor(Math.random() * 9000) + 1000;
-  //       const otpSaved = await User.findOneAndUpdate({ email: email }, { $set: { reset_otp: OTP } }, { new: true });
-  //       if (otpSaved) {
-  //         setTimeout(async () => {
-  //           await User.findOneAndUpdate({ email: email }, { $set: { reset_otp: null } })
-  //         }, 600000);
-  //         let params = {
-  //           Source: 'development@ddreg.in',
-  //           Destination: {
-  //             ToAddresses: [
-  //               email
-  //             ],
-  //           },
-  //           ReplyToAddresses: [],
-  //           Message: {
-  //             Body: {
-  //               Html: {
-  //                 Charset: 'UTF-8',
-  //                 Data: `Your OTP for reset password is ${OTP}`,
-  //               },
-  //             },
-  //             Subject: {
-  //               Charset: 'UTF-8',
-  //               Data: `Hello, ${userExist.firstName}!`,
-  //             }
-  //           },
-  //         }
-
-  //         new AWS.SES(awsConfig).sendEmail(params).promise().then(
-  //           function (data) {
-  //             return res.status(200).json({
-  //               code: "OTP_SENT",
-  //             })
-  //           }).catch(
-  //             function (err) {
-  //               console.error(err, err.stack);
-  //             });
-  //       }
-  //     } else {
-  //       return res.status(400).json({
-  //         code: "ERROROCCURED",
-  //         data: "THIS USER DOES NOT EXIST IN OUR DATABASE !!"
-  //       })
-  //     }
-  //   },
-
-  // ---------------End-------------------------
-
   // ------------Register-------------------------
   register: (req, res) => {
     Users.findOne({ email: req.body.email }).then((user) => {
@@ -87,21 +25,10 @@ module.exports = {
               gender: req.body.gender,
               dob: req.body.dob,
               role: req.body.role,
+              company:req.body.company
 
             });
-
             user.save().then(async (user) => {
-              // user.password = undefined;
-
-              // var params = { EmailAddress: req.body.email };
-              // try {
-              //   const emailSentSuccessfully = await SES.verifyEmailIdentity(params);
-              //   if (emailSentSuccessfully) {
-              //     console.log("Verification Email is sent");
-              //   }
-              // } catch (error) {
-              //   console.log("Error while sending the  verification email to user", error);
-              // }
               return res.status(200).json({
                 code: "CREATED",
                 data: user,
@@ -186,12 +113,12 @@ module.exports = {
           data: "User not found",
         });
       } else {
+  
         // comparing given password with hashed password
         bcrypt.compare(password, user.password).then(async function ( result,err) {
           
           if (result) {
             const role = await Role.find({ _id: user.role })
-
             if (err) {
               return res.status(200).json({
                 code: "ERROROCCURRED",
@@ -214,6 +141,7 @@ module.exports = {
                   expiresIn: "1d",
                 }
               );
+              
               return res.status(200).json({
                 code: "FETCHED",
                 token: token,
