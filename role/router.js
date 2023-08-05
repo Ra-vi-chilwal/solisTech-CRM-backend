@@ -1,6 +1,6 @@
 const { addRole, getRole } = require("./controller");
-// const { checkToken} = require('../s');
+const { checkToken} = require('../middleware');
 const RoleRouter = require("express").Router();
-RoleRouter.post("/add", addRole);
-RoleRouter.get("/get", getRole);
+RoleRouter.post("/add",checkToken, addRole);
+RoleRouter.get("/get",checkToken, getRole);
 module.exports = RoleRouter;

@@ -5,7 +5,7 @@ const planSchema = new mongoose.Schema(
     planName: { type: String,required: true  },
     price: { type: Number,required: true  },
     Duration: { type: Number,required: true  },
-    company:{type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true}
+    
   },
   { collection: "plan", timestamps: true }
 );

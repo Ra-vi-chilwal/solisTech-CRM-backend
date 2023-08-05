@@ -14,6 +14,7 @@ module.exports = {
           code: "DUPLICATEDATA",
         });
       } else {
+     
         hash(req.body.password, 8, (err, hash) => {
           if (hash) {
             const user = new Users({
@@ -230,41 +231,41 @@ module.exports = {
   },
 
   // --------- Get All uSer----------------------
-  getAllUser: (req, res) => {
-    const roleName = req.roleData && req.roleData.slug;
-    var userList;
-    if (
-      roleName === "superadmin" &&
-      req.roleData &&
-      req.roleData.permissions &&
-      req.roleData.permissions.some((item) => item.value === "root")
-    ) {
-      userList = User.find({})
-        .populate("company")
-        .populate("role")
-        .sort([["createdAt", -1]]);
-    } else {
-      userList = User.find({ company: req.user && req.user.company })
-        .populate("company")
-        .populate("role")
-        .sort([["createdAt", -1]]);
-    }
+getAllUser: async (req, res) => {
+    try {
+      const roleName = req.roleData?.slug;
+      let userList;
+      const data = req.roleData
+   
+      if (
+        roleName === "superadmin" &&
+        req.roleData?.permission?.some((item) => item.value === "root")
+        ) {
+          userList = await Users.find({})
+          .populate("company")
+          .populate("role")
+          .sort([["createdAt", -1]]);
 
-    userList.exec((error, result) => {
-      if (result) {
-        return res.status(200).json({
-          code: "FETCHED",
-          data: result,
-        });
       } else {
-        return res.status(400).json({
-          code: "ERROROCCURED",
-          data: error,
-        });
+        userList = await Users.find({ company: req.user?.company })
+          .populate("company")
+          .populate("role")
+          .sort([["createdAt", -1]]);
       }
-    });
-  },
 
+      return res.status(200).json({
+        code: "FETCHED",
+        data: userList,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(400).json({
+        code: "ERROROCCURED",
+        data: error.message,  
+      });
+    }
+  },
+  
   //-------change Pasword------------------
   changePassword: (req, res) => {
     User.findOne({ _id: req.user._id }).exec((err, user) => {

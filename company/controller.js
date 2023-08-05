@@ -3,6 +3,7 @@ const { Company } = require("./model");
 module.exports = {
   addCompany: async (req, res) => {
    const userData = req.body;
+   console.log(userData)
     try {
     
       const existingUser = await Company.findOne({ email: userData.email });

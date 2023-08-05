@@ -4,7 +4,7 @@ module.exports = {
   addRole:  async (req, res) => { 
         try {
             const userData = req.body;
-            console.log(userData)
+            
             const existingUser = await Role.findOne({ slug: userData.slug });
             if (existingUser) {
               return res.status(200).json({

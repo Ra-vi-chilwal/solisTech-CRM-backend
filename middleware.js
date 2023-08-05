@@ -8,6 +8,7 @@ module.exports = {
    checkToken : async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
+ 
     try {
       if (token) {
         verify(token, process.env.TOKEN_KEY, async (err, decoded) => {
@@ -26,8 +27,8 @@ module.exports = {
             });
             if (result) {
               const currentDate = new Date().toISOString().substring(0, 10);
-              console.log(result.company)
-              const expiredOn = result.company && result.company.expiredOn;
+             
+              const expiredOn = result.company && result.company.expireOn;
             
               if (expiredOn <= currentDate) {
                 return res.status(200).json({
@@ -38,17 +39,24 @@ module.exports = {
                   },
                 });
               } else {
-                Role.findById(result.role).exec((err, roleData) => {
+                try {
+                  const roleData = await Role.findById(result.role).exec();
+            
+              
                   if (roleData) {
                     result.role = roleData;
                     req.user = result;
                     req.roleData = roleData;
                     next();
                   }
-                });
+                } catch (err) {
+                  console.error(err);
+                  // Handle the error as needed
+                }
               }
             } else {
-              return res.status(404).json({
+              console.log(err)
+              return res.status(200).json({
                 code: 'USERNOTFOUND',
                 data: err,
               });

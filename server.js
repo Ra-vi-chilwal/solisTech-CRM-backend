@@ -35,10 +35,14 @@ const planRouter = require('./plan/router.js');
 const companyRouter = require('./company/router');
 const  roleRouter  = require("./role/router");
 const  verifyRouter  = require("./verify/router");
+const  leadRouter  = require("./leadSource/router");
+  
 app.use("/auth", authRouter);
 app.use("/plan", planRouter);
 app.use("/role", roleRouter);
 app.use("/verify", verifyRouter);
+app.use("/leadSource", leadRouter);
+
 app.use("/company",upload.single('companyLogo'), companyRouter);
 // app.use("/auth", authRouter);
 
