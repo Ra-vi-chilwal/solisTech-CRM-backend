@@ -7,10 +7,8 @@ const LeadSchema = new mongoose.Schema(
         date: { type: String, required: true },
         description: { type: String, required: true },
         email: { type: String, required: true },
-        enquiredFor: { type: Boolean },
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
-        layout: { type: String },
         leadOwner: { type: String, required: true },
         leadSource: { type: String, required: true },
         leadStatus: { type: String, required: true },
@@ -22,16 +20,30 @@ const LeadSchema = new mongoose.Schema(
         whatisyourbudget: { type: String },
         assignedUser: { type: Array },
         userAssociated: { type: String },
+        currentStatus: { type: String, default: null },
         // this data for expire :
         dropAt: { type: Date, default: null },
-        leadDropAt:{type:Date,default:null},
+        leadDropAt: { type: Date, default: null },
         company: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
-
+        reminderCall: { type: Date },
         //for Traffic Lighting
-
-        isShow: { type: String, enum: ['PENDING', 'ACCEPTED', 'REJECTED'], default: 'ACCEPTED' },
+ 
+        isShow: { type: String, enum: ['PENDING', 'ACCEPTED', 'REJECTED'], default: 'PENDING' },
         // expireAt: { type: Date, default: Date.now, expires: 60 },
         // extendedExpireAt: { type: Date, default: null},
+
+
+        //leadHistory
+        // user: { type: String },
+        // createTime: { type: String },
+        // stage: { type: String },
+        // status: { type: String },
+        // updatedBy: { type: String },
+        // leadStatus: { type: String },
+        // leadSource: { type: String },
+        // updatedFields: { type: Array },
+        // updatebyuser:{type: String},
+        // updatedbyDate:{type:String}
     },
     { collection: "leads", timestamps: true }
 );

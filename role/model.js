@@ -6,7 +6,6 @@ const roleSchema = new mongoose.Schema(
     title: { type: String, required: true },
     slug: { type: String,required: true  },
     permission :{type:Array,required: true },
-    
   },
   { collection: "role", timestamps: true }
 );

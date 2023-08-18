@@ -8,7 +8,6 @@ module.exports = {
    checkToken : async (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
- 
     try {
       if (token) {
         verify(token, process.env.TOKEN_KEY, async (err, decoded) => {
@@ -27,7 +26,6 @@ module.exports = {
             });
             if (result) {
               const currentDate = new Date().toISOString().substring(0, 10);
-             
               const expiredOn = result.company && result.company.expireOn;
             
               if (expiredOn <= currentDate) {
