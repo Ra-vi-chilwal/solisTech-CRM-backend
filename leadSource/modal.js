@@ -4,7 +4,7 @@ const LeadSchema = new mongoose.Schema(
         _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
         city: { type: String, required: true },
         country: { type: String, required: true },
-        date: { type: String, required: true },
+        date: { type: String},
         description: { type: String, required: true },
         email: { type: String, required: true },
         firstName: { type: String, required: true },
@@ -26,6 +26,11 @@ const LeadSchema = new mongoose.Schema(
         leadDropAt: { type: Date, default: null },
         company: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
         reminderCall: { type: Date },
+        meetingHighlight:{type: String},
+        meetingdate:{type: Date},
+        meetingType:{type: String},
+        meetingHost:{type: String},
+        followUp :{type:String},
         //for Traffic Lighting
  
         isShow: { type: String, enum: ['PENDING', 'ACCEPTED', 'REJECTED'], default: 'PENDING' },

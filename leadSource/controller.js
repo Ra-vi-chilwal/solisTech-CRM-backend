@@ -43,12 +43,13 @@ module.exports = {
         message: error,
       });
     }
-  },
+  },   
   getCustomLeads: async (req, res) => {
-    if (req?.user?.role?.slug == "superadmin" || req?.user?.role?.slug == "admin") {
+
+    if (req?.user?.role?.slug == "superadmin" ) {
       try {
         const leads = await Leads.find({})
-        console.log(leads)
+        
         return res.status(200).json({
           code: "FETCHED",
           data: leads,
@@ -59,14 +60,32 @@ module.exports = {
           message: "Internal Server Error",
         });
       }
-    } else {
+    }
+   else if(req?.user?.role?.slug == "center-head" || req?.user?.role?.slug == "cluster-manager"){
+    try {
+      const leads = await Leads.find({company: req.user.company})
+      
+      return res.status(200).json({
+        code: "FETCHED",
+        data: leads,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        code: "ERROR",
+        message: "Internal Server Error",
+      });
+    }
+   }
+    else {
       try {
+        console.log(req.user.company)
         const leads = await Leads.find({ company: req.user.company })
         const currentDate = new Date();
         const updatePromises = leads.map(async (element) => {
           const assignedUser = element.assignedUser.find((ele) => ele.id == req.user._id);
           if (assignedUser && assignedUser.managerstatus || assignedUser && assignedUser.leadstatus || element.dropAt <= currentDate) {
-            if (element.isShow === "PENDING" && element.dropAt === null) {
+            console.log("assignedUser")
+            if (element.isShow === "PENDING" && element.dropAt === null){
               const newDropAtDate = new Date(element.updatedAt);
               newDropAtDate.setHours(newDropAtDate.getHours() + 1);
               return Leads.findByIdAndUpdate(element._id, {
@@ -77,7 +96,6 @@ module.exports = {
               }, { new: true });
             }
             else if (element.currentStatus == "stage-1" && element.isShow === "PENDING" && element.dropAt <= currentDate) {
-
               const secondDropAtDate = new Date(element.dropAt);
               secondDropAtDate.setHours(secondDropAtDate.getHours() + 1);
               return Leads.findByIdAndUpdate(element._id, {
@@ -128,6 +146,7 @@ module.exports = {
             else {
               console.log("else")
             }
+
             return element
           }
         });
@@ -143,15 +162,13 @@ module.exports = {
       }
     }
   },
-  updateStatus: async (req, res) => {
+  updateLeads: async (req, res) => {
     try {
-      const incomingData = req.body; // Assuming you're using Express.js
+      const incomingData = req.body; 
       const existingDataArray = await Leads.find({ _id: req.params.id });
-
       if (existingDataArray.length === 0) {
-        // Handle the case where the record is not found
       } else {
-        const existingData = existingDataArray[0]; // Assuming you're interested in the first object
+        const existingData = existingDataArray[0]; 
         const updatedFields = {};
         for (const field in incomingData) {
           if (incomingData[field] !== existingData[field]) {
@@ -178,30 +195,57 @@ module.exports = {
       res.status(500).json({ message: 'Internal server error' });
     }
   },
-  UpdateStatus: async (req, res) => {
-    try {
-      const UpdateStatus = await Leads.findByIdAndUpdate(
-        { _id: req.body.id, company: req.user.company },
-        { new: true }
-      );
-
-      if (!UpdateStatus) {
-        return res.status(404).json({ message: 'Lead not found' });
-      }
-      return res.status(200).json({
-        code: "UPDATED",
-        data: UpdateStatus,
-      });
-    } catch (error) {
-      return res.status(200).json({
-        code: "ERROROCCURRED",
-        data: error,
-      });
+  updateStatus: async (req,res)=>{
+try {
+  const UpdateStatus = await Leads.findByIdAndUpdate( { _id: req.body.id, company: req.user.company },{
+    $set:{
+      isShow:req.body.isShow
     }
+  }, { new: true });
+  if (UpdateStatus){
+    return res.status(200).json({
+            code: "UPDATED",
+            data: UpdateStatus,
+          });
+  }else{
+    return res.status(200).json({
+      code: "ERROR",
+      data: 'error occurred',
+    });
+  }
+
+} catch (error) {
+  return res.status(200).json({
+    code: "ERROR",
+    data: error,
+  });
+}
   },
+  // UpdateStatus: async (req, res) => {
+  //   try {
+  //     const UpdateStatus = await Leads.findByIdAndUpdate(
+  //       { _id: req.body.id, company: req.user.company },
+  //       { new: true }
+  //     );
+
+  //     if (!UpdateStatus) {
+  //       return res.status(404).json({ message: 'Lead not found' });
+  //     }
+  //     return res.status(200).json({
+  //       code: "UPDATED",
+  //       data: UpdateStatus,
+  //     });
+  //   } catch (error) {
+  //     return res.status(200).json({
+  //       code: "ERROROCCURRED",
+  //       data: error,
+  //     });
+  //   }
+  // },
+
   getLeadHistroy: async (req, res) => {
     try {
-      if (req?.user?.role?.slug == "superadmin" || req?.user?.role?.slug == "admin") {
+      if (req?.user?.role?.slug == "superadmin" || req?.user?.role?.slug == "center-head" || req?.user?.role?.slug == "cluster-manager") {
         await LeadHistory.find({ lead: req.params.id }).then((result, err) => {
           console.log(err)
           if (result) {
@@ -228,5 +272,6 @@ module.exports = {
       })
     }
   }
+
 };
 

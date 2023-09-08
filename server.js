@@ -16,8 +16,6 @@ app.use(
 );
 connect();
 app.use(cors());
-
-
 //multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -29,23 +27,21 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-
 const authRouter = require('./Auth/router.js');
 const planRouter = require('./plan/router.js');
 const companyRouter = require('./company/router');
 const  roleRouter  = require("./role/router");
 const  verifyRouter  = require("./verify/router");
 const  leadRouter  = require("./leadSource/router");
-  
+const  WebsiteLeadRouter  = require("./WebsiteLead/router");
 app.use("/auth", authRouter);
 app.use("/plan", planRouter);
 app.use("/role", roleRouter);
 app.use("/verify", verifyRouter);
 app.use("/leadSource", leadRouter);
-
+app.use("/website-lead", WebsiteLeadRouter);
 app.use("/company",upload.single('companyLogo'), companyRouter);
 // app.use("/auth", authRouter);
-
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(5000, () => {
